@@ -1,0 +1,24 @@
+service: three-agents-auth-backend
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: eu-west-3
+  timeout: 29
+  memorySize: 512
+  environment:
+    NODE_ENV: production
+    MONGODB_URI: ${env:MONGODB_URI, ''}
+    JWT_SECRET: ${env:JWT_SECRET, ''}
+    SMTP_HOST: ${env:SMTP_HOST, ''}
+    SMTP_PORT: ${env:SMTP_PORT, ''}
+    SMTP_USER: ${env:SMTP_USER, ''}
+    SMTP_PASS: ${env:SMTP_PASS, ''}
+    FRONTEND_URL: ${env:FRONTEND_URL, ''}
+
+functions:
+  app:
+    handler: lambda.lambdaHandler
+    events:
+      - httpApi: "*"
+
