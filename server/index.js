@@ -16,7 +16,7 @@ app.use(cors({
       "http://localhost:3000",
       "https://autonomiq.ae",
       "https://www.autonomiq.ae",
-      "https://userinfo.afterlife.org.in/"
+      "https://userinfo.afterlife.org.in"
     ].filter(Boolean);
     // Allow requests with no origin (mobile apps, curl, etc.)
     if (!origin || allowedOrigins.includes(origin)) {
