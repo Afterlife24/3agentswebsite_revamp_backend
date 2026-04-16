@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import authRoutes from "./routes/auth.js";
+import adminRoutes from "./routes/admin.js";
 
 const app = express();
 
@@ -11,6 +12,8 @@ app.use(cors({
     const allowedOrigins = [
       process.env.FRONTEND_URL,
       "http://localhost:5173",
+      "http://localhost:3001",
+      "http://localhost:3000",
       "https://autonomiq.ae",
       "https://www.autonomiq.ae",
     ].filter(Boolean);
@@ -26,6 +29,7 @@ app.use(cors({
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
+app.use("/api/admin", adminRoutes);
 
 app.get("/", (_, res) => res.json({ status: "ok" }));
 app.get("/health", (_, res) => res.json({ status: "ok" }));
