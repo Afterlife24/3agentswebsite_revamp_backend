@@ -4,33 +4,31 @@ import cors from "cors";
 import mongoose from "mongoose";
 import authRoutes from "./routes/auth.js";
 import adminRoutes from "./routes/admin.js";
+import agentUsageRoutes from "./routes/agentUsage.js";
 
 const app = express();
 
-app.use(cors({
-  origin: function (origin, callback) {
-    const allowedOrigins = [
-      process.env.FRONTEND_URL,
-      "http://localhost:5173",
-      "http://localhost:3001",
-      "http://localhost:3000",
-      "https://autonomiq.ae",
-      "https://www.autonomiq.ae",
-      "https://userinfo.afterlife.org.in"
-    ].filter(Boolean);
-    // Allow requests with no origin (mobile apps, curl, etc.)
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true,
-}));
+const allowedOrigins = [
+  process.env.FRONTEND_URL || "http://localhost:5173",
+  "http://localhost:5173",
+  "http://localhost:3001",
+  "http://localhost:3000",
+  "https://autonomiq.ae",
+  "https://www.autonomiq.ae",
+  "https://autonomiq.co",
+  "https://www.autonomiq.co",
+  "https://admin.autonomiq.co",
+  "https://userinfo.afterlife.org.in",
+].filter(Boolean);
+app.use(cors({ origin: allowedOrigins, credentials: true }));
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/agent-usage", agentUsageRoutes);
+
+// Mount auth routes at /api too so dashboard can reach /api/admin/users locally
+app.use("/api", authRoutes);
 
 app.get("/", (_, res) => res.json({ status: "ok" }));
 app.get("/health", (_, res) => res.json({ status: "ok" }));

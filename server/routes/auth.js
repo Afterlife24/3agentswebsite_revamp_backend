@@ -253,4 +253,17 @@ router.get("/me", async (req, res) => {
   }
 });
 
+// ─── ADMIN: GET ALL USERS ───
+router.get("/admin/users", async (req, res) => {
+  try {
+    const users = await User.find()
+      .select("-password -otp -otpExpiry -resetOtp -resetOtpExpiry")
+      .sort({ createdAt: -1 });
+    res.json({ users });
+  } catch (err) {
+    console.error("Admin users error:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 export default router;
