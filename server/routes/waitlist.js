@@ -1,5 +1,6 @@
 import express from "express";
 import Waitlist from "../models/Waitlist.js";
+import { sendWaitlistConfirmationEmail } from "../utils/email.js";
 
 const router = express.Router();
 
@@ -35,6 +36,14 @@ router.post("/join", async (req, res) => {
         });
 
         await waitlistEntry.save();
+
+        // Send confirmation email
+        try {
+            await sendWaitlistConfirmationEmail(email, name);
+        } catch (emailError) {
+            console.error("Failed to send confirmation email:", emailError);
+            // Don't fail the request if email fails
+        }
 
         res.status(201).json({
             success: true,
