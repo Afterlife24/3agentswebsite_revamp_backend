@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import authRoutes from "./routes/auth.js";
 import adminRoutes from "./routes/admin.js";
 import agentUsageRoutes from "./routes/agentUsage.js";
+import waitlistRoutes from "./routes/waitlist.js";
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/agent-usage", agentUsageRoutes);
+app.use("/api/waitlist", waitlistRoutes);
 
 // Mount auth routes at /api too so dashboard can reach /api/admin/users locally
 app.use("/api", authRoutes);
