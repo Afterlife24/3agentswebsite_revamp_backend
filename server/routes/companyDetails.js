@@ -37,8 +37,20 @@ router.post('/', authenticateToken, async (req, res) => {
             description
         } = req.body;
 
+        console.log('Received company details request:', {
+            userId: req.user.userId,
+            body: req.body
+        });
+
         // Validate required fields
         if (!companyName || !industry || !companySize || !country || !phoneNumber) {
+            console.error('Missing required fields:', {
+                companyName: !!companyName,
+                industry: !!industry,
+                companySize: !!companySize,
+                country: !!country,
+                phoneNumber: !!phoneNumber
+            });
             return res.status(400).json({ error: 'Missing required fields' });
         }
 
@@ -57,6 +69,7 @@ router.post('/', authenticateToken, async (req, res) => {
             companyDetails.description = description;
 
             await companyDetails.save();
+            console.log('Updated company details for user:', req.user.userId);
         } else {
             // Create new company details
             companyDetails = new CompanyDetails({
@@ -72,6 +85,7 @@ router.post('/', authenticateToken, async (req, res) => {
             });
 
             await companyDetails.save();
+            console.log('Created new company details for user:', req.user.userId);
         }
 
         res.status(200).json({
@@ -81,7 +95,16 @@ router.post('/', authenticateToken, async (req, res) => {
         });
     } catch (error) {
         console.error('Error saving company details:', error);
-        res.status(500).json({ error: 'Failed to save company details' });
+        console.error('Error stack:', error.stack);
+        console.error('Error details:', {
+            name: error.name,
+            message: error.message,
+            code: error.code
+        });
+        res.status(500).json({
+            error: 'Failed to save company details',
+            details: error.message
+        });
     }
 });
 
