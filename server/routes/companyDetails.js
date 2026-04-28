@@ -23,8 +23,8 @@ const authenticateToken = (req, res, next) => {
     });
 };
 
-// POST - Save/Update company details
-router.post('/', authenticateToken, async (req, res) => {
+// POST - Save/Update company details (PUBLIC - no auth required)
+router.post('/', async (req, res) => {
     try {
         const {
             companyName,
@@ -34,28 +34,46 @@ router.post('/', authenticateToken, async (req, res) => {
             country,
             phoneNumber,
             address,
-            description
+            description,
+            email // We'll use email to identify the company
         } = req.body;
 
         console.log('Received company details request:', {
-            userId: req.user.userId,
+            email,
             body: req.body
         });
 
         // Validate required fields
-        if (!companyName || !industry || !companySize || !country || !phoneNumber) {
+        if (!companyName || !industry || !companySize || !country || !phoneNumber || !email) {
             console.error('Missing required fields:', {
                 companyName: !!companyName,
                 industry: !!industry,
                 companySize: !!companySize,
                 country: !!country,
-                phoneNumber: !!phoneNumber
+                phoneNumber: !!phoneNumber,
+                email: !!email
             });
-            return res.status(400).json({ error: 'Missing required fields' });
+            return res.status(400).json({ error: 'Missing required fields (email is required)' });
         }
 
-        // Check if company details already exist for this user
-        let companyDetails = await CompanyDetails.findOne({ userId: req.user.userId });
+        // Find user by email to get userId (optional - for linking to user account)
+        let userId = null;
+        try {
+            const user = await User.findOne({ email });
+            if (user) {
+                userId = user._id;
+            }
+        } catch (err) {
+            console.log('User not found, creating company details without userId');
+        }
+
+        // Check if company details already exist for this email or phone
+        let companyDetails = await CompanyDetails.findOne({
+            $or: [
+                { userId: userId },
+                { phoneNumber: phoneNumber }
+            ]
+        });
 
         if (companyDetails) {
             // Update existing details
@@ -67,13 +85,14 @@ router.post('/', authenticateToken, async (req, res) => {
             companyDetails.phoneNumber = phoneNumber;
             companyDetails.address = address;
             companyDetails.description = description;
+            if (userId) companyDetails.userId = userId;
 
             await companyDetails.save();
-            console.log('Updated company details for user:', req.user.userId);
+            console.log('Updated company details for email:', email);
         } else {
             // Create new company details
             companyDetails = new CompanyDetails({
-                userId: req.user.userId,
+                userId: userId,
                 companyName,
                 industry,
                 companySize,
@@ -85,7 +104,7 @@ router.post('/', authenticateToken, async (req, res) => {
             });
 
             await companyDetails.save();
-            console.log('Created new company details for user:', req.user.userId);
+            console.log('Created new company details for email:', email);
         }
 
         res.status(200).json({
