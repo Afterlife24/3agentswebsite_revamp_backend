@@ -48,13 +48,12 @@ router.get("/summary", async (req, res) => {
       },
     ]);
 
-    // Recent usage (last 50)
-    const recent = await AgentUsage.find()
+    // All individual logs (sorted by most recent first)
+    const allLogs = await AgentUsage.find()
       .sort({ createdAt: -1 })
-      .limit(50)
       .select("userEmail userName agentType createdAt");
 
-    res.json({ perUser, totals, recent });
+    res.json({ perUser, totals, allLogs });
   } catch (err) {
     console.error("Agent usage summary error:", err);
     res.status(500).json({ error: "Server error" });
