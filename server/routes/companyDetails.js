@@ -2,6 +2,7 @@ import express from 'express';
 import CompanyDetails from '../models/CompanyDetails.js';
 import User from '../models/User.js';
 import jwt from 'jsonwebtoken';
+import { sendCompanyDetailsConfirmationEmail } from '../utils/email.js';
 
 const router = express.Router();
 
@@ -105,6 +106,15 @@ router.post('/', async (req, res) => {
 
             await companyDetails.save();
             console.log('Created new company details for email:', email);
+        }
+
+        // Send confirmation email
+        try {
+            await sendCompanyDetailsConfirmationEmail(email, companyName);
+            console.log('Confirmation email sent to:', email);
+        } catch (emailError) {
+            console.error('Failed to send confirmation email:', emailError);
+            // Don't fail the request if email fails
         }
 
         res.status(200).json({
