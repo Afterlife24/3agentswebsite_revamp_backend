@@ -3,10 +3,10 @@ import mongoose from "mongoose";
 const agentUsageSchema = new mongoose.Schema({
   userEmail: { type: String, required: true, lowercase: true, trim: true },
   userName: { type: String, trim: true },
-  agentType: { 
-    type: String, 
-    enum: ["web", "calling", "whatsapp"], 
-    required: true 
+  agentType: {
+    type: String,
+    enum: ["web", "calling", "whatsapp"],
+    required: true
   },
 }, { timestamps: true });
 
