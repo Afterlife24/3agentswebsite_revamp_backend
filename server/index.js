@@ -22,6 +22,7 @@ const allowedOrigins = [
   "https://www.autonomiq.co",
   "https://admin.autonomiq.co",
   "https://userinfo.afterlife.org.in",
+  "https://d1ft9ghqzxdmzf.cloudfront.net",
 ].filter(Boolean);
 app.use(cors({ origin: allowedOrigins, credentials: true }));
 app.use(express.json());
