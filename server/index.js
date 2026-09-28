@@ -8,6 +8,7 @@ import agentUsageRoutes from "./routes/agentUsage.js";
 import waitlistRoutes from "./routes/waitlist.js";
 import companyDetailsRoutes from "./routes/companyDetails.js";
 import callLogsRoutes from "./routes/callLogs.js";
+import dashboardAuthRoutes from "./routes/dashboardAuth.js";
 
 const app = express();
 
@@ -33,6 +34,7 @@ app.use("/api/agent-usage", agentUsageRoutes);
 app.use("/api/waitlist", waitlistRoutes);
 app.use("/api/company-details", companyDetailsRoutes);
 app.use("/api/call-logs", callLogsRoutes);
+app.use("/api/dashboard-auth", dashboardAuthRoutes);
 
 // Mount auth routes at /api too so dashboard can reach /api/admin/users locally
 app.use("/api", authRoutes);
